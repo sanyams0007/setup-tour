@@ -2,32 +2,55 @@ const puppeteer = require("puppeteer");
 
 const scrapeChannel = async (url) => {
   try {
-    const browser = await puppeteer.launch();
+    // open headless browser
+    const browser = await puppeteer.launch({
+      headless: false,
+      args: ["--disable-setuid-sandbox"],
+      ignoreHTTPSErrors: true,
+    });
+
     console.log(`Opening ${url}`);
+
+    //open a new page
     const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"
+    );
     await page.goto(url, { waitUntil: "load", timeout: 0 });
 
     // Wait for the required DOM to be rendered
-    await page.waitForSelector(
-      ".yt-simple-endpoint.style-scope.yt-formatted-string"
-    );
-    let scrapedData = {
-      items: [],
-    };
+    await page.waitForSelector("a.yt-formatted-string");
 
     // Extract all links from below selector & gets only amazon links
-    let urls = await page.$$eval(
-      ".yt-simple-endpoint.style-scope.yt-formatted-string",
-      (links) => {
-        links = links
-          .map((link) => link.textContent)
-          .filter(
-            (link) => link.toLowerCase().indexOf("amzn.to" || "amazon") !== -1
-          );
-        return links;
+
+    /* let urls = await page.$$eval("a.yt-formatted-string", (links) => {
+      console.log("before", links);
+      const filteredLinks = links
+        .map((link) => link.textContent)
+        .filter(
+          (link) => link.toLowerCase().indexOf("amzn.to" || "amazon") !== -1
+        );
+      console.log("after", filteredLinks);
+      return filteredLinks;
+    }); */
+
+    let urls = await page.evaluate(() => {
+      const links = document.querySelectorAll(`a.yt-formatted-string`);
+      let filteredLinks = [];
+      for (let i = 0; i < links.length; i++) {
+        if (
+          links[i].innerText
+            .trim()
+            .toLowerCase()
+            .includes("amzn.to" || "amazon") &&
+          !filteredLinks.includes(links[i].innerText.trim())
+        ) {
+          filteredLinks.push(links[i].innerText.trim());
+        }
       }
-    );
-    //console.log(urls);
+      return filteredLinks;
+    });
+    console.log(urls);
 
     // if no urls then exit
     if (urls.length <= 0) {
@@ -35,6 +58,12 @@ const scrapeChannel = async (url) => {
       await browser.close();
       return null;
     }
+
+    let scrapedData = {
+      items: [],
+    };
+
+    console.log("processing urls");
 
     //item to scrape
     const [channel] = await page.$x('//*[@id="text"]/a');
@@ -55,6 +84,9 @@ const scrapeChannel = async (url) => {
     let pagePromise = (link) =>
       new Promise(async (resolve, reject) => {
         let newPage = await browser.newPage();
+        await newPage.setUserAgent(
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"
+        );
         await newPage.goto(link, { waitUntil: "load", timeout: 0 });
 
         await newPage.waitForSelector("#productTitle");

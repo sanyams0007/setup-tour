@@ -76,9 +76,29 @@ button {
   position: relative;
 }
 
+.laoding,
+.error {
+  height: 65vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.animate {
+  animation: loading 1s infinite alternate-reverse;
+}
+
+@keyframes loading {
+  from {
+    transform: scale(0.7);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 .header {
   width: 100vw;
-  height: 25vh;
   background-color: rgb(29, 185, 84);
 }
 

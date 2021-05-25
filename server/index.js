@@ -10,23 +10,24 @@ app.use(express.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 4000;
 
-/* app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-}); */
-
 app.get("/", (req, res) => {
   res.send("Setup Explorer!");
 });
 
 app.post("/creators", async (req, res) => {
-  const channelData = await scrapeChannel(req.body.channelURL);
-  console.log("processed : ", channelData);
-  if (channelData === null)
+  if (!req.body.channelURL.includes(`https://www.youtube.com`))
     return res.status(400).json({
-      msg: "No Data found with the given link.",
+      msg: "Invalid URL.",
     });
+
+  const channelData = await scrapeChannel(req.body.channelURL);
+
+  if (channelData === null || channelData === undefined)
+    return res.status(400).json({
+      msg: "No Urls found in the link.",
+    });
+
+  console.log("processing done");
   res.json(channelData);
 });
 
