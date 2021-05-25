@@ -6,18 +6,18 @@ import axios from "axios";
 const App = () => {
   const [channelURL, setChannelURL] = useState("");
   const [scrapedData, setScrapedData] = useState({});
+  const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(null);
 
   const submitUrl = async (e) => {
     e.preventDefault();
     if (channelURL === "") return;
     setScrapedData({});
-
     try {
-      const creator = await axios.post("http://localhost:5000/creators", {
+      setLoading(true);
+      const creator = await axios.post("http://localhost:4000/creators", {
         channelURL,
       });
-      //console.log(creator);
       setScrapedData(creator.data);
     } catch (error) {
       error.response.data.msg && setServerError(error.response.data.msg);
@@ -27,12 +27,13 @@ const App = () => {
         setServerError(null);
       }, 5000);
     }
+    setLoading(false);
   };
 
   return (
     <>
       <div className="app ">
-        <div className="header flex_center">
+        <header className="header flex_center">
           <h1>Setup Tour</h1>
           <form>
             <input
@@ -45,10 +46,21 @@ const App = () => {
             />
             <button onClick={submitUrl}>Submit</button>
           </form>
-        </div>
+          <div>
+            <h3>Example URls</h3>
+            <p>https://www.youtube.com/watch?v=qnxo_jR83bM</p>
+            <p>https://www.youtube.com/watch?v=TQfIUS52QHA</p>
+            <p>https://www.youtube.com/channel/UC-91UA-Xy2Cvb98deRXuggA</p>
+          </div>
+        </header>
         {serverError && (
           <div className="flex_center">
             <h2>{serverError}</h2>
+          </div>
+        )}
+        {loading && (
+          <div className="flex_center">
+            <h2>Loading Please wait...</h2>
           </div>
         )}
         {scrapedData.channelName && (
@@ -74,13 +86,13 @@ const App = () => {
             })}
           </div>
         )}
+        <footer className="footer flex_center">
+          Made by Sanyam
+          <a href="www.google.com">
+            <GitHubIcon fontSize="large"></GitHubIcon>
+          </a>
+        </footer>
       </div>
-      <footer className="footer flex_center">
-        Made by Sanyam
-        <a href="www.google.com">
-          <GitHubIcon fontSize="large"></GitHubIcon>
-        </a>
-      </footer>
     </>
   );
 };

@@ -43,10 +43,10 @@ const scrapeChannel = async (url) => {
     //console.log(typeof channelName);
     scrapedData["channelName"] = channelName;
 
-    const [avatarImg] = await page.$x(
+    /* const [avatarImg] = await page.$x(
       "/html/body/ytd-app/div/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[8]/div[3]/ytd-video-secondary-info-renderer/div/div[2]/ytd-video-owner-renderer/a/yt-img-shadow/img"
-    );
-    //const [avatarImg] = await page.$x('//*[@id="img"]');
+    ); */
+    const [avatarImg] = await page.$x('//*[@id="img"]');
     const avatarSrc = await avatarImg.getProperty("src");
     const avatarURL = await avatarSrc.jsonValue();
     //scrapedData[avatarURL];
@@ -102,6 +102,7 @@ const scrapeChannel = async (url) => {
   }
 };
 
+//https://www.youtube.com/watch?v=qnxo_jR83bM&t=1s
 //https://www.youtube.com/watch?v=TQfIUS52QHA
 /* scrapeChannel("https://www.youtube.com/channel/UC-91UA-Xy2Cvb98deRXuggA"); */
 

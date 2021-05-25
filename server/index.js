@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 /* app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/creators", async (req, res) => {
-  //console.log(req.body);
   const channelData = await scrapeChannel(req.body.channelURL);
   console.log("processed : ", channelData);
   if (channelData === null)
