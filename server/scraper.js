@@ -16,15 +16,13 @@ const scrapeChannel = async (url) => {
     await page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"
     );
+    await page.setDefaultNavigationTimeout(0);
     await page.goto(url, { waitUntil: "load", timeout: 0 });
 
     // Wait for the required DOM to be rendered
     await page.waitForSelector("a.yt-formatted-string");
 
-    // Extract all links from below selector & gets only amazon links
-
     /* let urls = await page.$$eval("a.yt-formatted-string", (links) => {
-      console.log("before", links);
       const filteredLinks = links
         .map((link) => link.textContent)
         .filter(
@@ -34,6 +32,7 @@ const scrapeChannel = async (url) => {
       return filteredLinks;
     }); */
 
+    // Extract all links from below selector & gets only amazon links
     let urls = await page.evaluate(() => {
       const links = document.querySelectorAll(`a.yt-formatted-string`);
       let filteredLinks = [];
@@ -54,7 +53,6 @@ const scrapeChannel = async (url) => {
 
     // if no urls then exit
     if (urls.length <= 0) {
-      //console.log("null");
       await browser.close();
       return null;
     }
@@ -72,12 +70,19 @@ const scrapeChannel = async (url) => {
     //console.log(typeof channelName);
     scrapedData["channelName"] = channelName;
 
-    /* const [avatarImg] = await page.$x(
+    /*
+    const [avatarImg] = await page.$x(
       "/html/body/ytd-app/div/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[8]/div[3]/ytd-video-secondary-info-renderer/div/div[2]/ytd-video-owner-renderer/a/yt-img-shadow/img"
-    ); */
-    const [avatarImg] = await page.$x('//*[@id="img"]');
-    const avatarSrc = await avatarImg.getProperty("src");
-    const avatarURL = await avatarSrc.jsonValue();
+    );
+    */
+
+    const [, avatarURL] = await page.$$eval("#avatar > img#img", (imgs) =>
+      imgs.map((img) => img.src)
+    );
+
+    //const [avatarImg] = await page.$x('(//*[@id="img"])');
+    /* const avatarSrc = await avatarImg.getProperty("src");
+    const avatarURL = await avatarSrc.jsonValue(); */
     //scrapedData[avatarURL];
     scrapedData["avatarURL"] = avatarURL;
 
@@ -87,6 +92,7 @@ const scrapeChannel = async (url) => {
         await newPage.setUserAgent(
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"
         );
+        await newPage.setDefaultNavigationTimeout(0);
         await newPage.goto(link, { waitUntil: "load", timeout: 0 });
 
         await newPage.waitForSelector("#productTitle");
@@ -133,9 +139,5 @@ const scrapeChannel = async (url) => {
     return null;
   }
 };
-
-//https://www.youtube.com/watch?v=qnxo_jR83bM&t=1s
-//https://www.youtube.com/watch?v=TQfIUS52QHA
-/* scrapeChannel("https://www.youtube.com/channel/UC-91UA-Xy2Cvb98deRXuggA"); */
 
 module.exports = { scrapeChannel };
