@@ -123,7 +123,7 @@ const App = () => {
         >
           <p>
             Made by Sanyam
-            <a href="www.google.com">
+            <a href="https://github.com/sanyams0007/setup-tour">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 role="img"
