@@ -17,7 +17,7 @@ const App = () => {
     //console.log("Start", new Date());
     try {
       const creator = await axios.post(
-        "/creators",
+        "https://setup-tour.herokuapp.com/creators",
         { channelURL },
         { timeout: 600000 }
       );

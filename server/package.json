@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "backend logic for scrapper app",
+  "description": "backend logic for scraping app",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -15,7 +15,7 @@
     "express": "^4.17.1",
     "puppeteer": "^7.0.1"
   },
-  "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": true,
+  "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": false,
   "devDependencies": {
     "nodemon": "^2.0.7"
   }

@@ -4,8 +4,15 @@ const scrapeChannel = async (url) => {
   try {
     // open headless browser
     const browser = await puppeteer.launch({
-      headless: false,
-      args: ["--disable-setuid-sandbox"],
+      headless: true,
+      defaultViewport: null,
+      args: [
+        "--incognito",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+        '--disable-setuid-sandbox',
+      ],
       ignoreHTTPSErrors: true,
     });
 
