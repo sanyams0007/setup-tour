@@ -20,7 +20,7 @@ const App = () => {
     //
     try {
       const creator = await axios.post(
-        "http://localhost:4000/creators",
+        "https://setup-tour.herokuapp.com/creators",
         { channelURL },
         { timeout: 600000 }
       );
