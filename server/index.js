@@ -25,7 +25,7 @@ app.post(
       return res.status(400).json({
         msg: "Invalid URL.",
       });
-      
+
     const channelData = await scrapeChannel(req.body.channelURL);
 
     if (channelData === null || channelData === undefined)
