@@ -15,9 +15,12 @@ const App = () => {
     setLoading(true);
 
     //console.log("Start", new Date());
+    //https://github.com/jontewks/puppeteer-heroku-buildpack
+    //"https://setup-tour.herokuapp.com/creators",
+    //
     try {
       const creator = await axios.post(
-        "https://setup-tour.herokuapp.com/creators",
+        "http://localhost:4000/creators",
         { channelURL },
         { timeout: 600000 }
       );
